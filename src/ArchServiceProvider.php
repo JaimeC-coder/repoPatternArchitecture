@@ -3,7 +3,7 @@ namespace Repopattern\Arch;
 
 use Illuminate\Support\ServiceProvider;
 
-class TestServiceProvider extends ServiceProvider
+class ArchServiceProvider extends ServiceProvider
 {
  
 
