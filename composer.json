@@ -3,6 +3,12 @@
   "description": "Library focused on creating files necessary for using the repository pattern",
   "type": "library",
   "license": "MIT",
+  "require": {
+    "illuminate/support": "^12.7",
+    "illuminate/console": "^12.7",
+    "illuminate/filesystem": "^12.7",
+    "illuminate/config": "^12.7"
+  },
   "autoload": {
     "psr-4": {
       "Repopattern\\Arch\\": "src/"
@@ -22,10 +28,5 @@
     }
   },
   "minimum-stability": "stable",
-  "require": {
-    "illuminate/support": "^12.7",
-    "illuminate/console": "^12.7",
-    "illuminate/filesystem": "^12.7",
-    "illuminate/config": "^12.7"
-  }
+  "prefer-stable": true
 }
