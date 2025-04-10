@@ -1,0 +1,31 @@
+{
+  "name": "repopattern/arch",
+  "description": "Library focused on creating files necessary for using the repository pattern",
+  "type": "library",
+  "license": "MIT",
+  "autoload": {
+    "psr-4": {
+      "Repopattern\\Arch\\": "src/"
+    }
+  },
+  "authors": [
+    {
+      "name": "Eduardo Centurion L",
+      "email": "centurionjaime@gmail.com"
+    }
+  ],
+  "extra": {
+    "laravel": {
+      "providers": [
+        "Repopattern\\Arch\\ArchServiceProvider"
+      ]
+    }
+  },
+  "minimum-stability": "stable",
+  "require": {
+    "illuminate/support": "^12.7",
+    "illuminate/console": "^12.7",
+    "illuminate/filesystem": "^12.7",
+    "illuminate/config": "^12.7"
+  }
+}
