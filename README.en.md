@@ -10,7 +10,7 @@ Through Artisan commands, it allows you to generate repositories, services, DTOs
 To install this library, use Composer:
 
 ```bash
-composer require jaimec-coder/architecture-library
+composer require repopattern/arch
 ```
 
 ## Available Commands

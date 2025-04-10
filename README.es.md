@@ -11,7 +11,7 @@ Architecture Library es una librería PHP enfocada en la creación automatizada 
 Para instalar esta librería, usa Composer:
 
 ```bash
-composer require jaimec-coder/architecture-library
+composer require repopattern/arch
 ```
     
 
