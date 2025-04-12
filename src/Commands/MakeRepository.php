@@ -16,7 +16,7 @@ class MakeRepository extends Command
         $name = $this->argument('name');
 
         // Crear el repositorio base si no existe
-        $baseRepositoryPath = App::basePath("Repositories/BaseRepository.php");
+        $baseRepositoryPath = App::basePath("app/Repositories/BaseRepository.php");
         if (!file_exists($baseRepositoryPath)) {
             $baseRepositoryStub = "<?php\n\nnamespace App\Repositories;\n\nuse Illuminate\Database\Eloquent\Model;\n\nclass BaseRepository\n{\n    protected \$model;\n\n    public function __construct(Model \$model)\n    {\n        \$this->model = \$model;\n    }\n\n    public function create(array \$data)\n    {\n        return \$this->model->create(\$data);\n    }\n\n    public function all()\n    {\n        return \$this->model->all();\n    }\n\n    public function find(\$id)\n    {\n        return \$this->model->find(\$id);\n    }\n\n    public function update(\$id, array \$data)\n    {\n        \$record = \$this->model->find(\$id);\n        if (\$record) {\n            \$record->update(\$data);\n            return \$record;\n        }\n        return null;\n    }\n\n    public function delete(\$id)\n    {\n        \$record = \$this->model->find(\$id);\n        if (\$record) {\n            \$record->delete();\n            return true;\n        }\n        return false;\n    }\n}";
             $this->writeFile($baseRepositoryPath, $baseRepositoryStub);
@@ -24,7 +24,7 @@ class MakeRepository extends Command
         }
 
         // Crear el repositorio específico
-        $repositoryPath = App::basePath("Repositories/{$name}Repository.php");
+        $repositoryPath = App::basePath("app/Repositories/{$name}Repository.php");
         if (file_exists($repositoryPath)) {
             $this->error("El repositorio {$name}Repository ya existe.");
             return;

@@ -4,10 +4,10 @@
   "type": "library",
   "license": "MIT",
   "require": {
-    "illuminate/support": "^12.7",
-    "illuminate/console": "^12.7",
-    "illuminate/filesystem": "^12.7",
-    "illuminate/config": "^12.7"
+    "illuminate/support": "^11.7",
+    "illuminate/console": "^11.7",
+    "illuminate/filesystem": "^11.7",
+    "illuminate/config": "^11.7"
   },
   "autoload": {
     "psr-4": {

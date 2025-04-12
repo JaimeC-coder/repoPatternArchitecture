@@ -28,19 +28,19 @@ class MakeDtos extends Command
     {
         $name = $this->argument('name');
 
-        if (!is_dir(App::basePath("DTOs"))) {
-            mkdir(App::basePath("DTOs"), 0755, true);
+        if (!is_dir(App::basePath("app/DTOs"))) {
+            mkdir(App::basePath("app/DTOs"), 0755, true);
         }
 
 
-        $path = App::basePath("Dtos/{$name}Dto.php");
+        $path = App::basePath("app/Dtos/{$name}Dto.php");
 
 
         if (file_exists($path)) {
             $this->error("El DTO {$name}Dto ya existe.");
             return;
         }
-        $dtoPath = App::basePath("DTOs/{$name}DTO.php");
+        $dtoPath = App::basePath("app/DTOs/{$name}DTO.php");
 
         $stub =  "<?php\n\nnamespace App\DTOs;\n\nclass {$name}DTO\n{\n    public function __construct(\$data)\n    {\n        foreach (\$data as \$key => \$value) {\n            \$this->{\$key} = \$value;\n        }\n    }\n}";
         $this->writeFile($dtoPath, $stub);

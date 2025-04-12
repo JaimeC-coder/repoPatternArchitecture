@@ -36,7 +36,7 @@ class MakeService extends Command
             return;
         }
 
-        $servicePath = App::basePath("Services/{$name}Service.php");
+        $servicePath = App::basePath("app/Services/{$name}Service.php");
 
         $stub = "<?php\n\nnamespace App\Services;\n\nuse App\Repositories\\{$name}Repository;\nuse App\DTOs\\{$name}DTO;\n\nclass {$name}Service\n{\n    protected \${$name}Repository;\n\n    public function __construct({$name}Repository \${$name}Repository)\n    {\n        \$this->{$name}Repository = \${$name}Repository;\n    }\n\n    public function create({$name}DTO \$dto)\n    {\n        return \$this->{$name}Repository->create((array) \$dto);\n    }\n}";
 
