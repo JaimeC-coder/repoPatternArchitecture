@@ -13,32 +13,39 @@ class MakeRepository extends Command
 
     public function handle()
     {
-        $name = $this->argument('name'); // Ej: Admin/User
+        $name = $this->argument('name');
 
-        $modelName = basename($name); // User
-        $className = $modelName . 'Repository'; // UserRepository
+        $modelName = basename($name);                  // Ej: User
+        $className = $modelName . 'Repository';        // UserRepository
         $namespacePath = str_replace('/', '\\', dirname($name));
         $namespace = $namespacePath === '.' ? 'App\Repositories' : 'App\Repositories\\' . $namespacePath;
 
         $repositoryPath = App::basePath("app/Repositories/{$name}Repository.php");
-
-        // Crear BaseRepository si no existe
         $baseRepositoryPath = App::basePath("app/Repositories/BaseRepository.php");
+
+        // 1. Generar BaseRepository si no existe
         if (!file_exists($baseRepositoryPath)) {
-            $baseStubPath = base_path('stubs/baseRepository.stub') ?: __DIR__ . '/../../stubs/baseRepository.stub';
+            $baseStubPath = $this->resolveStubPath('baseRepository.stub');
+
+            if (!file_exists($baseStubPath)) {
+                $this->error("No se encontró el stub 'baseRepository.stub'.");
+                return;
+            }
+
             $baseStub = file_get_contents($baseStubPath);
             $this->writeFile($baseRepositoryPath, $baseStub);
             $this->info("BaseRepository creado correctamente.");
         }
 
-        // Validar si ya existe el repositorio
+        // 2. Validar si ya existe el repositorio
         if (file_exists($repositoryPath)) {
             $this->error("El repositorio {$className} ya existe.");
             return;
         }
 
-        // Cargar stub
-        $stubPath = base_path('stubs/repository.stub') ?: __DIR__ . '/../../stubs/repository.stub';
+        // 3. Cargar stub del repositorio
+        $stubPath = $this->resolveStubPath('repository.stub');
+
         if (!file_exists($stubPath)) {
             $this->error("No se encontró el stub del repositorio.");
             return;
@@ -58,9 +65,23 @@ class MakeRepository extends Command
     private function writeFile($path, $content)
     {
         $filesystem = new Filesystem();
+
         if (!$filesystem->exists(dirname($path))) {
             $filesystem->makeDirectory(dirname($path), 0755, true);
         }
-        $filesystem->put($path, $content);
+
+        if (!$filesystem->exists($path)) {
+            $filesystem->put($path, $content);
+        } else {
+            $this->warn("El archivo ya existe: {$path}");
+        }
+    }
+
+    private function resolveStubPath(string $stubName): string
+    {
+        $primaryPath = App::basePath("stubs/{$stubName}");
+        $fallbackPath = __DIR__ . "/../../stubs/{$stubName}";
+
+        return file_exists($primaryPath) ? $primaryPath : $fallbackPath;
     }
 }

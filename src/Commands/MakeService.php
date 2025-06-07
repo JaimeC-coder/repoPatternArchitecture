@@ -15,23 +15,24 @@ class MakeService extends Command
     {
         $name = $this->argument('name');
 
-        $className = basename($name) . 'Service';
-        $modelName = basename($name);
+        $modelName = basename($name);               // Ej: User
+        $className = $modelName . 'Service';        // Ej: UserService
         $varName = lcfirst($modelName) . 'Repository';
 
-        $servicePath = App::basePath("app/Services/{$name}Service.php");
-        $serviceNamespacePath = str_replace('/', '\\', dirname($name));
-        $namespace = $serviceNamespacePath === '.' ? 'App\Services' : 'App\Services\\' . $serviceNamespacePath;
+        $namespacePath = str_replace('/', '\\', dirname($name));
+        $namespace = $namespacePath === '.' ? 'App\Services' : 'App\Services\\' . $namespacePath;
 
-        $repoNamespace = $serviceNamespacePath === '.' ? '' : $serviceNamespacePath;
-        $dtoNamespace = $repoNamespace;
+        $dtoNamespace = $namespacePath === '.' ? 'App\DTOs' : 'App\DTOs\\' . $namespacePath;
+        $repoNamespace = $namespacePath === '.' ? 'App\Repositories' : 'App\Repositories\\' . $namespacePath;
+
+        $servicePath = App::basePath("app/Services/{$name}Service.php");
 
         if (file_exists($servicePath)) {
             $this->error("El servicio {$className} ya existe.");
             return;
         }
 
-        $stubPath = base_path('stubs/service.stub');
+        $stubPath = App::basePath('stubs/service.stub');
         if (!file_exists($stubPath)) {
             $stubPath = __DIR__ . '/../../stubs/service.stub';
         }
@@ -43,7 +44,6 @@ class MakeService extends Command
 
         $stub = file_get_contents($stubPath);
 
-        // Reemplazos
         $stub = str_replace(
             ['{{ namespace }}', '{{ class }}', '{{ model }}', '{{ var }}', '{{ repoNamespace }}', '{{ dtoNamespace }}'],
             [$namespace, $className, $modelName, $varName, $repoNamespace, $dtoNamespace],
@@ -60,6 +60,11 @@ class MakeService extends Command
         if (!$filesystem->exists(dirname($path))) {
             $filesystem->makeDirectory(dirname($path), 0755, true);
         }
-        $filesystem->put($path, $content);
+
+        if (!$filesystem->exists($path)) {
+            $filesystem->put($path, $content);
+        } else {
+            $this->warn("El archivo ya existe: {$path}");
+        }
     }
 }
