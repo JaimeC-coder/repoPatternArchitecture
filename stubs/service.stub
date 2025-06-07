@@ -1,0 +1,21 @@
+<?php
+
+namespace {{ namespace }};
+
+use App\Repositories\{{ repoNamespace }}\{{ model }}Repository;
+use App\DTOs\{{ dtoNamespace }}\{{ model }}DTO;
+
+class {{ class }}
+{
+    protected {{ model }}Repository ${{ var }};
+
+    public function __construct({{ model }}Repository ${{ var }})
+    {
+        $this->{{ var }} = ${{ var }};
+    }
+
+    public function create({{ model }}DTO $dto)
+    {
+        return $this->{{ var }}->create((array) $dto);
+    }
+}

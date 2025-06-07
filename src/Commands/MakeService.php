@@ -3,58 +3,63 @@
 namespace Repopattern\Arch\Commands;
 
 use Illuminate\Console\Command;
+use Illuminate\Filesystem\Filesystem;
 use Illuminate\Support\Facades\App;
-
 
 class MakeService extends Command
 {
-    /**
-     * The name and signature of the console command.
-     *
-     * @var string
-     */
     protected $signature = 'make:service {name}';
-
-    /**
-     * The console command description.
-     *
-     * @var string
-     */
     protected $description = 'Genera un servicio para la entidad especificada';
 
-    /**
-     * Execute the console command.
-     */
     public function handle()
     {
         $name = $this->argument('name');
 
-        $path = App::basePath("app/Services/{$name}Service.php");
+        $className = basename($name) . 'Service';
+        $modelName = basename($name);
+        $varName = lcfirst($modelName) . 'Repository';
 
-        if (file_exists($path)) {
-            $this->error("El servicio {$name}Service ya existe.");
+        $servicePath = App::basePath("app/Services/{$name}Service.php");
+        $serviceNamespacePath = str_replace('/', '\\', dirname($name));
+        $namespace = $serviceNamespacePath === '.' ? 'App\Services' : 'App\Services\\' . $serviceNamespacePath;
+
+        $repoNamespace = $serviceNamespacePath === '.' ? '' : $serviceNamespacePath;
+        $dtoNamespace = $repoNamespace;
+
+        if (file_exists($servicePath)) {
+            $this->error("El servicio {$className} ya existe.");
             return;
         }
 
-        $servicePath = App::basePath("app/Services/{$name}Service.php");
+        $stubPath = base_path('stubs/service.stub');
+        if (!file_exists($stubPath)) {
+            $stubPath = __DIR__ . '/../../stubs/service.stub';
+        }
 
-        $stub = "<?php\n\nnamespace App\Services;\n\nuse App\Repositories\\{$name}Repository;\nuse App\DTOs\\{$name}DTO;\n\nclass {$name}Service\n{\n    protected \${$name}Repository;\n\n    public function __construct({$name}Repository \${$name}Repository)\n    {\n        \$this->{$name}Repository = \${$name}Repository;\n    }\n\n    public function create({$name}DTO \$dto)\n    {\n        return \$this->{$name}Repository->create((array) \$dto);\n    }\n}";
+        if (!file_exists($stubPath)) {
+            $this->error("No se encontró el stub del servicio.");
+            return;
+        }
+
+        $stub = file_get_contents($stubPath);
+
+        // Reemplazos
+        $stub = str_replace(
+            ['{{ namespace }}', '{{ class }}', '{{ model }}', '{{ var }}', '{{ repoNamespace }}', '{{ dtoNamespace }}'],
+            [$namespace, $className, $modelName, $varName, $repoNamespace, $dtoNamespace],
+            $stub
+        );
 
         $this->writeFile($servicePath, $stub);
-
-        $this->info("Servicio '{$name}' generado correctamente.");
+        $this->info("Servicio '{$className}' generado correctamente en {$servicePath}");
     }
+
     private function writeFile($path, $content)
     {
-        $filesystem = new \Illuminate\Filesystem\Filesystem();
+        $filesystem = new Filesystem();
         if (!$filesystem->exists(dirname($path))) {
             $filesystem->makeDirectory(dirname($path), 0755, true);
         }
-        if (!$filesystem->exists($path)) {
-            $filesystem->put($path, $content);
-        } else {
-            $this->warn("El archivo ya existe: {$path}");
-        }
+        $filesystem->put($path, $content);
     }
-
 }

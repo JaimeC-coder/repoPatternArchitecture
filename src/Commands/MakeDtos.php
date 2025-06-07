@@ -28,24 +28,36 @@ class MakeDtos extends Command
     {
         $name = $this->argument('name');
 
-        if (!is_dir(App::basePath("app/DTOs"))) {
-            mkdir(App::basePath("app/DTOs"), 0755, true);
-        }
+        $className = basename($name);
+        $namespacePath = str_replace('/', '\\', dirname($name)); // prueba
+        $namespace = $namespacePath === '.' ? 'App\DTOs' : 'App\DTOs\\' . $namespacePath;
 
+        $dtoPath = App::basePath("app/DTOs/{$name}.php");
 
-        $path = App::basePath("app/Dtos/{$name}Dto.php");
-
-
-        if (file_exists($path)) {
-            $this->error("El DTO {$name}Dto ya existe.");
+        if (file_exists($dtoPath)) {
+            $this->error("El DTO {$className} ya existe.");
             return;
         }
-        $dtoPath = App::basePath("app/DTOs/{$name}DTO.php");
 
-        $stub =  "<?php\n\nnamespace App\DTOs;\n\nclass {$name}DTO\n{\n    public function __construct(\$data)\n    {\n        foreach (\$data as \$key => \$value) {\n            \$this->{\$key} = \$value;\n        }\n    }\n}";
+        $stubPath = __DIR__ . '/../../stubs/dto.stub';
+
+        if (!file_exists($stubPath)) {
+            $this->error("No se encontró el stub.");
+            return;
+        }
+
+        $stub = file_get_contents($stubPath);
+
+        // Reemplazar variables
+        $stub = str_replace(
+            ['{{ namespace }}', '{{ class }}'],
+            [$namespace, $className],
+            $stub
+        );
+
         $this->writeFile($dtoPath, $stub);
 
-        $this->info("DTO {$name}Dto creado exitosamente en {$path}");
+        $this->info("DTO {$className} creado exitosamente en {$dtoPath}");
     }
 
     private function writeFile($path, $content)
