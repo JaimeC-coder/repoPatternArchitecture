@@ -9,6 +9,6 @@ class {{ class }} extends BaseRepository
 {
     public function __construct()
     {
-        parent::__construct(new {{ model }}());
+         $this->model = new {{ model }}();
     }
 }

@@ -4,5 +4,29 @@ namespace {{ namespace }};
 
 class {{ class }}
 {
+      public string $value;
+ 
+    public ?string $id;
 
+    public function __construct(string $value, ?string $id = null)
+    {
+        $this->value = $value;
+        $this->id = $id;
+    }
+
+    public static function fromRequest(CoinRequest $data): self
+    {
+        return new self(
+            $data->input('value'),
+            $data->input('id')
+        );
+    }
+
+    public function toArray(): array
+    {
+        return [
+            'value' => $this->value,
+            'id' => $this->id,
+        ];
+    }
 }
