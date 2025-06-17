@@ -15,8 +15,8 @@ class MakeRepository extends Command
     {
         $name = $this->argument('name');
 
-        $modelName = basename($name);                  // Ej: User
-        $className = $modelName . 'Repository';        // UserRepository
+        $modelName = basename($name);                  
+        $className = $modelName . 'Repository';        
         $namespacePath = str_replace('/', '\\', dirname($name));
         $namespace = $namespacePath === '.' ? 'App\Repositories' : 'App\Repositories\\' . $namespacePath;
 

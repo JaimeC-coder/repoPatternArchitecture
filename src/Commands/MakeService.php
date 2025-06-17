@@ -15,8 +15,8 @@ class MakeService extends Command
     {
         $name = $this->argument('name');
 
-        $modelName = basename($name);               // Ej: User
-        $className = $modelName . 'Service';        // Ej: UserService
+        $modelName = basename($name);               
+        $className = $modelName . 'Service';        
         $varName = lcfirst($modelName) . 'Repository';
 
         $namespacePath = str_replace('/', '\\', dirname($name));
